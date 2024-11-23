@@ -1,0 +1,427 @@
+<html>
+<head>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    .carousel {
+      display: flex;
+      overflow: hidden;
+      position: relative;
+    }
+    .carousel img {
+      min-width: 100%;
+      transition: transform 0.5s ease;
+      cursor: pointer;
+    }
+    .carousel-buttons {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      transform: translateY(-50%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .carousel:hover .carousel-buttons {
+      opacity: 1;
+    }
+    .carousel-button {
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+    }
+    .menu {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      cursor: pointer;
+    }
+    .menu-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      background-color: white;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      z-index: 1;
+    }
+    .menu-content a {
+      color: black;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+    }
+    .menu-content a:hover {
+      background-color: #ddd;
+    }
+    .menu:hover .menu-content {
+      display: block;
+    }
+    .item-box {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .item-box:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .button-hover:hover {
+      background-color: #e2e8f0;
+    }
+    .mobile-menu {
+      display: none;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 50;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.8);
+    }
+    .modal-content {
+      position: relative;
+      margin: auto;
+      padding: 0;
+      width: 90%;
+      max-width: 1200px;
+    }
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 25px;
+      color: white;
+      font-size: 35px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .modal-buttons {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      transform: translateY(-50%);
+    }
+    .modal-button {
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+    }
+    @media (max-width: 768px) {
+      .desktop-menu {
+        display: none;
+      }
+      .mobile-menu {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+      }
+      .categories {
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+      .categories button {
+        display: inline-block;
+      }
+      .menu {
+        top: auto;
+        bottom: 10px;
+      }
+      .item-box:hover {
+        transform: none;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body class="bg-white text-gray-800">
+  <header class="flex justify-between items-center p-4 border-b">
+    <div class="text-2xl font-bold" style="font-family: 'Readex Pro', sans-serif;">
+      Oblix
+    </div>
+    <nav class="space-x-4 desktop-menu">
+      <a class="text-gray-600 hover:text-black" href="#">
+        Browse
+      </a>
+      <a class="text-gray-600 hover:text-black" href="listitems.html">
+        List Items
+      </a>
+      <a class="text-gray-600 hover:text-black" href="aboutus.html">
+        About Us
+      </a>
+    </nav>
+    <div class="text-gray-600 hover:text-black">
+      <a href="login.html"><i class="fas fa-user"></i></a>
+    </div>
+  </header>
+  <div class="mobile-menu p-4">
+    <a class="text-gray-600 hover:text-black" href="#">
+      Browse
+    </a>
+    <a class="text-gray-600 hover:text-black" href="listitems.html">
+      List Items
+    </a>
+    <a class="text-gray-600 hover:text-black" href="aboutus.html">
+      About Us
+    </a>
+  </div>
+  <main class="flex flex-col items-center mt-12 px-4">
+    <div class="text-center">
+      <h1 class="text-3xl font-bold">
+        Oblix Marketplace
+      </h1>
+      <p class="text-gray-500">
+        Discover, Buy, and Sell Digital Products – Empowering Entrepreneurs to Connect and Scale in the Digital Economy!
+      </p>
+    </div>
+    <div class="mt-6 w-full max-w-md">
+      <input class="w-full p-2 border rounded-full" placeholder="Search for websites, apps, templates..." type="text"/>
+    </div>
+    <div class="flex space-x-2 mt-4 categories">
+      <button class="px-4 py-2 bg-black text-white rounded-full" onclick="filterItems('all', this)">
+        All
+      </button>
+      <button class="px-4 py-2 bg-gray-200 text-gray-600 rounded-full" onclick="filterItems('saved', this)">
+        Saved
+      </button>
+      <button class="px-4 py-2 bg-gray-200 text-gray-600 rounded-full" onclick="filterItems('your-listings', this)">
+        Your Listings
+      </button>
+      <button class="px-4 py-2 bg-gray-200 text-gray-600 rounded-full" onclick="filterItems('saas', this)">
+        saas
+      </button>
+      <button class="px-4 py-2 bg-gray-200 text-gray-600 rounded-full" onclick="filterItems('games', this)">
+        games
+      </button>
+      <button class="px-4 py-2 bg-gray-200 text-gray-600 rounded-full" onclick="filterItems('websites', this)">
+        websites
+      </button>
+    </div>
+    <div class="mt-8 space-y-4 w-full max-w-4xl" id="itemContainer">
+      <div class="border rounded-lg p-2 flex flex-col md:flex-row relative item-box" data-category="all">
+        <div class="menu md:top-10 md:right-10 bottom-10 right-10">
+          <i class="fas fa-ellipsis-v"></i>
+          <div class="menu-content">
+            <a href="#" onclick="saveItem(this)">Save</a>
+            <a href="#" onclick="shareItem(this)">Share</a>
+            <a href="#">Report</a>
+          </div>
+        </div>
+        <div class="w-full md:w-1/3 flex items-center justify-center border rounded-lg relative">
+          <div class="carousel">
+            <img alt="Placeholder image 1" class="object-cover h-full w-full" height="150" onclick="openModal(this)" src="https://placehold.co/150x150" width="150"/>
+            <img alt="Placeholder image 2" class="object-cover h-full w-full" height="150" onclick="openModal(this)" src="https://placehold.co/150x150" width="150"/>
+            <img alt="Placeholder image 3" class="object-cover h-full w-full" height="150" onclick="openModal(this)" src="https://placehold.co/150x150" width="150"/>
+          </div>
+          <div class="carousel-buttons">
+            <button class="carousel-button prev" onclick="prevImage(this)">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="carousel-button next" onclick="nextImage(this)">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+        <div class="w-full md:w-2/3 pl-4 flex flex-col justify-between mt-4 md:mt-0">
+          <div>
+            <div class="font-bold text-lg">
+              test
+            </div>
+            <div class="text-gray-600">
+              test
+            </div>
+            <div class="text-gray-600 mt-2 line-clamp-4">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.
+            </div>
+            <div class="text-purple-600 text-xl mt-2">
+              $99
+            </div>
+            <div class="text-gray-600 mt-1">
+              Added by username
+            </div>
+          </div>
+          <div class="flex justify-between items-center mt-2">
+            <div class="flex space-x-2">
+              <a class="px-4 py-2 bg-gray-200 text-gray-600 rounded-full button-hover" href="https://example.com/preview" target="_blank">
+                Preview
+              </a>
+              <a class="px-4 py-2 bg-gray-200 text-gray-600 rounded-full button-hover" href="mailto:username@example.com">
+                Contact Owner
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="border rounded-lg p-2 flex flex-col md:flex-row relative item-box" data-category="all">
+        <div class="menu md:top-10 md:right-10 bottom-10 right-10">
+          <i class="fas fa-ellipsis-v"></i>
+          <div class="menu-content">
+            <a href="#" onclick="saveItem(this)">Save</a>
+            <a href="#" onclick="shareItem(this)">Share</a>
+            <a href="#">Report</a>
+          </div>
+        </div>
+        <div class="w-full md:w-1/3 flex items-center justify-center border rounded-lg relative">
+          <div class="carousel">
+            <img alt="Placeholder image 1" class="object-cover h-full w-full" height="150" onclick="openModal(this)" src="https://placehold.co/150x150" width="150"/>
+            <img alt="Placeholder image 2" class="object-cover h-full w-full" height="150" onclick="openModal(this)" src="https://placehold.co/150x150" width="150"/>
+            <img alt="Placeholder image 3" class="object-cover h-full w-full" height="150" onclick="openModal(this)" src="https://placehold.co/150x150" width="150"/>
+          </div>
+          <div class="carousel-buttons">
+            <button class="carousel-button prev" onclick="prevImage(this)">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="carousel-button next" onclick="nextImage(this)">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+        <div class="w-full md:w-2/3 pl-4 flex flex-col justify-between mt-4 md:mt-0">
+          <div>
+            <div class="font-bold text-lg">
+              test
+            </div>
+            <div class="text-gray-600">
+              test
+            </div>
+            <div class="text-gray-600 mt-2 line-clamp-4">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.
+            </div>
+            <div class="text-purple-600 text-xl mt-2">
+              $99
+            </div>
+            <div class="text-gray-600 mt-1">
+              Added by username
+            </div>
+          </div>
+          <div class="flex justify-between items-center mt-2">
+            <div class="flex space-x-2">
+              <a class="px-4 py-2 bg-gray-200 text-gray-600 rounded-full button-hover" href="https://example.com/preview" target="_blank">
+                Preview
+              </a>
+              <a class="px-4 py-2 bg-gray-200 text-gray-600 rounded-full button-hover" href="mailto:username@example.com">
+                Contact Owner
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <div class="modal" id="imageModal">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <div class="modal-content">
+      <img id="modalImage" style="width: 100%;" />
+      <div class="modal-buttons">
+        <button class="modal-button prev" onclick="prevModalImage()">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <button class="modal-button next" onclick="nextModalImage()">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  <script>
+    function toggleMobileMenu() {
+      const mobileMenu = document.querySelector('.mobile-menu');
+      mobileMenu.classList.toggle('hidden');
+    }
+    function nextImage(button) {
+      const carousel = button.closest('.carousel-buttons').previousElementSibling;
+      const images = carousel.querySelectorAll('img');
+      const currentImage = Array.from(images).findIndex(img => img.style.transform === 'translateX(-100%)');
+      images.forEach(img => img.style.transform = 'translateX(0)');
+      if (currentImage === images.length - 1) {
+        images[0].style.transform = 'translateX(-100%)';
+      } else {
+        images[currentImage + 1].style.transform = 'translateX(-100%)';
+      }
+    }
+    function prevImage(button) {
+      const carousel = button.closest('.carousel-buttons').previousElementSibling;
+      const images = carousel.querySelectorAll('img');
+      const currentImage = Array.from(images).findIndex(img => img.style.transform === 'translateX(-100%)');
+      images.forEach(img => img.style.transform = 'translateX(0)');
+      if (currentImage === 0) {
+        images[images.length - 1].style.transform = 'translateX(-100%)';
+      } else {
+        images[currentImage - 1].style.transform = 'translateX(-100%)';
+      }
+    }
+    function saveItem(element) {
+      const itemBox = element.closest('.item-box');
+      itemBox.setAttribute('data-category', 'saved');
+      alert('Item saved!');
+    }
+    function shareItem(element) {
+      if (navigator.share) {
+        navigator.share({
+          title: 'Check out this item',
+          text: 'Check out this amazing item I found on Oblix Marketplace!',
+          url: window.location.href
+        }).then(() => {
+          console.log('Thanks for sharing!');
+        }).catch(console.error);
+      } else {
+        alert('Share options will be shown!');
+      }
+    }
+    function openModal(image) {
+      const modal = document.getElementById('imageModal');
+      const modalImage = document.getElementById('modalImage');
+      modalImage.src = image.src;
+      modal.style.display = 'block';
+    }
+    function closeModal() {
+      const modal = document.getElementById('imageModal');
+      modal.style.display = 'none';
+    }
+    function nextModalImage() {
+      const modalImage = document.getElementById('modalImage');
+      const images = document.querySelectorAll('.carousel img');
+      const currentImageIndex = Array.from(images).findIndex(img => img.src === modalImage.src);
+      if (currentImageIndex === images.length - 1) {
+        modalImage.src = images[0].src;
+      } else {
+        modalImage.src = images[currentImageIndex + 1].src;
+      }
+    }
+    function prevModalImage() {
+      const modalImage = document.getElementById('modalImage');
+      const images = document.querySelectorAll('.carousel img');
+      const currentImageIndex = Array.from(images).findIndex(img => img.src === modalImage.src);
+      if (currentImageIndex === 0) {
+        modalImage.src = images[images.length - 1].src;
+      } else {
+        modalImage.src = images[currentImageIndex - 1].src;
+      }
+    }
+    function filterItems(category, button) {
+      const items = document.querySelectorAll('.item-box');
+      items.forEach(item => {
+        if (category === 'all' || item.getAttribute('data-category') === category) {
+          item.style.display = 'flex';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+      const categoryButtons = document.querySelectorAll('.categories button');
+      categoryButtons.forEach(btn => {
+        btn.classList.remove('bg-black', 'text-white');
+        btn.classList.add('bg-gray-200', 'text-gray-600');
+      });
+      button.classList.remove('bg-gray-200', 'text-gray-600');
+      button.classList.add('bg-black', 'text-white');
+    }
+  </script>
+</body>
+</html>

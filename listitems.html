@@ -1,0 +1,161 @@
+<html>
+<head>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    .item-box {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .item-box:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .button-hover:hover {
+      background-color: #e2e8f0;
+    }
+    .mobile-menu {
+      display: none;
+    }
+    @media (max-width: 768px) {
+      .desktop-menu {
+        display: none;
+      }
+      .mobile-menu {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body class="bg-white text-gray-800">
+  <header class="flex justify-between items-center p-4 border-b">
+    <div class="text-2xl font-bold" style="font-family: 'Readex Pro', sans-serif;">
+      Oblix
+    </div>
+    <nav class="space-x-4 desktop-menu">
+      <a class="text-gray-600 hover:text-black" href="index.html">
+        Browse
+      </a>
+      <a class="text-gray-600 hover:text-black" href="listitems.html">
+        List Items
+      </a>
+      <a class="text-gray-600 hover:text-black" href="aboutus.html">
+        About Us
+      </a>
+    </nav>
+    <div class="text-gray-600 hover:text-black">
+      <a href="login.html">
+        <i class="fas fa-user"></i>
+      </a>
+    </div>
+  </header>
+  <div class="mobile-menu p-4">
+    <a class="text-gray-600 hover:text-black" href="index.html">
+      Browse
+    </a>
+    <a class="text-gray-600 hover:text-black" href="listitems.html">
+      List Items
+    </a>
+    <a class="text-gray-600 hover:text-black" href="aboutus.html">
+      About Us
+    </a>
+  </div>
+  <main class="flex flex-col items-center mt-12 px-4">
+    <div class="text-center">
+      <h1 class="text-3xl font-bold">
+        List Your Item
+      </h1>
+      <p class="text-gray-500">
+        Fill in the details below to list your item on Oblix Marketplace.
+      </p>
+    </div>
+    <div class="mt-6 w-full max-w-2xl">
+      <form class="space-y-4" id="listItemForm">
+        <div>
+          <label class="block text-gray-700">Item Name</label>
+          <input class="w-full p-2 border rounded" type="text" placeholder="Enter item name" id="itemName" required/>
+        </div>
+        <div>
+          <label class="block text-gray-700">Description</label>
+          <textarea class="w-full p-2 border rounded" rows="4" placeholder="Enter item description" id="itemDescription" required></textarea>
+        </div>
+        <div>
+          <label class="block text-gray-700">Price</label>
+          <input class="w-full p-2 border rounded" type="number" placeholder="Enter item price" id="itemPrice" required/>
+        </div>
+        <div>
+          <label class="block text-gray-700">Preview Link</label>
+          <input class="w-full p-2 border rounded" type="url" placeholder="Enter preview link" id="itemPreviewLink" required/>
+        </div>
+        <div>
+          <label class="block text-gray-700">Contact Email</label>
+          <input class="w-full p-2 border rounded" type="email" placeholder="Enter contact email" id="itemContactEmail" required/>
+        </div>
+        <div>
+          <label class="block text-gray-700">Category</label>
+          <select class="w-full p-2 border rounded" id="itemCategory" required>
+            <option>saas</option>
+            <option>games</option>
+            <option>websites</option>
+            <option>templates</option>
+            <option>other</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-gray-700">Upload Images</label>
+          <input class="w-full p-2 border rounded" type="file" id="itemImages" multiple required/>
+        </div>
+        <div class="text-center">
+          <button class="px-4 py-2 bg-black text-white rounded-full button-hover" type="submit">
+            List Item
+          </button>
+        </div>
+      </form>
+    </div>
+  </main>
+  <script>
+    document.getElementById('listItemForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      
+      const itemName = document.getElementById('itemName').value;
+      const itemDescription = document.getElementById('itemDescription').value;
+      const itemPrice = document.getElementById('itemPrice').value;
+      const itemPreviewLink = document.getElementById('itemPreviewLink').value;
+      const itemContactEmail = document.getElementById('itemContactEmail').value;
+      const itemCategory = document.getElementById('itemCategory').value;
+      const itemImages = document.getElementById('itemImages').files;
+      
+      const item = {
+        name: itemName,
+        description: itemDescription,
+        price: itemPrice,
+        previewLink: itemPreviewLink,
+        contactEmail: itemContactEmail,
+        category: itemCategory,
+        images: []
+      };
+      
+      for (let i = 0; i < itemImages.length; i++) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          item.images.push(e.target.result);
+          if (item.images.length === itemImages.length) {
+            saveItem(item);
+          }
+        };
+        reader.readAsDataURL(itemImages[i]);
+      }
+    });
+    
+    function saveItem(item) {
+      let items = JSON.parse(localStorage.getItem('items')) || [];
+      items.push(item);
+      localStorage.setItem('items', JSON.stringify(items));
+      alert('Item listed successfully!');
+      window.location.href = 'index.html';
+    }
+  </script>
+</body>
+</html>
